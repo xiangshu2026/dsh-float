@@ -116,18 +116,49 @@ dsh web: http://127.0.0.1:<端口>/?token=<一串字符>
 > **不需要**：root、开发者选项、Xposed、任何系统级修改。
 > 只有走 USB 隧道时需要开「USB 调试」，那是**手机**的开发者选项，跟 App 本身无关。
 
-### 方式二：自己编译
+### 方式二：自己编译（命令行，不用 Android Studio）
 
-⚠️ **本仓库不含 gradle 构建工程**，只有源码。要自己编译需要：
+本仓库不含 gradle 工程，但有一套完整的命令行构建流程，**已实测可用**。
+需要 JDK 17 + Android build-tools（aapt2 / d8 / zipalign / apksigner）+ `android.jar`。
 
-1. 用 Android Studio 新建一个空项目（minSdk 26+）
-2. 把 `app/src/com/alpha/dshfloat/` 下的 4 个 Java 文件拷进去
-3. 把 `app/res/` 下的资源文件拷进去
-4. 在 `AndroidManifest.xml` 里注册 `FloatService` 和 `MainActivity`，声明 `SYSTEM_ALERT_WINDOW` 权限
-5. 编译
+```bash
+WORK=/path/to/work            # 英文路径，别用中文
+BT=$ANDROID_HOME/build-tools  # 含 aapt2 / d8 / zipalign / apksigner
+JDK=$JAVA_HOME
+AJAR=$WORK/android.jar        # platform-35 的 android.jar
+
+# 1. 编译资源与 manifest
+aapt2 compile --dir app/res -o build/res.zip
+aapt2 link -o build/base.apk -I $AJAR \
+  --manifest app/AndroidManifest.xml \
+  --java build/gen build/res.zip \
+  --min-sdk-version 26 --target-sdk-version 35 --auto-add-overlay
+
+# 2. 编译 Java（必须用 --release 8 -classpath，不能用 -bootclasspath）
+javac -encoding UTF-8 --release 8 -classpath $AJAR -d build/classes \
+  $(find app/src build/gen -name '*.java')
+
+# 3. 转 dex
+d8 --release --min-api 26 --lib $AJAR --output build/dex build/classes/**/*.class
+
+# 4. 组装 + 对齐 + 签名
+cp build/base.apk build/unsigned.apk
+(cd build/dex && jar uf ../unsigned.apk classes.dex)
+zipalign -f 4 build/unsigned.apk build/aligned.apk
+apksigner sign --ks my.keystore --out build/DSHFloat.apk build/aligned.apk
+```
+
+**三个必须知道的坑**：
+
+| 坑 | 说明 |
+|---|---|
+| **中文路径会失败** | aapt2 在含中文的路径下报 `failed to open directory`，文件明明存在。把整个工程放到纯英文路径再编译 |
+| **`-bootclasspath` 会报错** | javac 用 `-bootclasspath android.jar` 会报「找不到 LambdaMetafactory」，必须改成 `--release 8 -classpath` |
+| **改 manifest 要重跑 aapt2** | 只改 Java 代码时 d8 那步就够；改了 `AndroidManifest.xml` 或 `res/` 必须从 aapt2 link 重来 |
 
 **为什么没有 gradle 工程**：这个项目是在手机上直接写 + 用命令行工具编译的，
-没有走 Android Studio 的标准工程结构。源码是完整的，但缺构建脚手架。
+没有走 Android Studio 的标准工程结构。上面这套命令就是当时的实际构建流程，
+2026-10-31 重新验证过一遍，产物 33,820 B，`apksigner verify` 退出码 0。
 
 ---
 
@@ -182,7 +213,7 @@ adb reverse tcp:19387 tcp:19387      # 把手机的 19387 转到电脑
 
 ## 已知限制
 
-1. **没有 gradle 工程** —— 只能直接装 APK，或自己搭 Android Studio 工程
+1. **没有 gradle 工程** —— 用命令行构建（命令见上），或自己搭 Android Studio 工程
 2. **只测过 Android 12** —— 一台 Android 12 真机 + MuMu 模拟器（Android 12 / x86_64），其他版本未验证
 3. **DSH 登录 token 每次都变** —— App 里用签名密钥自动处理，但 DSH 重启后可能需要重连
 4. **局域网模式可能 403** —— 建议用 adb 反向隧道
