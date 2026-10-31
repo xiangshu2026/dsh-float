@@ -1,0 +1,19 @@
+# 构建产物（APK 通过 Release 分发，不进 git）
+*.apk
+*.aab
+build/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+local.properties
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 手机桌面截图（含个人壁纸与已装应用列表，不公开）
+_v6.png
+# 开发交接文档（留在本地）
+交接文档-新会话必读.md

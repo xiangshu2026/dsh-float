@@ -1,0 +1,23 @@
+{
+  "name": "dsh-float",
+  "version": "1.0.0",
+  "description": "Android 悬浮窗，把 DeepSeek Harness 的手机页面置顶显示，边打字边看 AI 回复。零第三方依赖，APK 约 33 KB。",
+  "keywords": [
+    "android",
+    "floating-window",
+    "overlay",
+    "deepseek-harness",
+    "webview",
+    "kotlin-free",
+    "java"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiangshu2026/dsh-float.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiangshu2026/dsh-float/issues"
+  },
+  "homepage": "https://github.com/xiangshu2026/dsh-float#readme"
+}

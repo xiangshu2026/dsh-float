@@ -1,0 +1,99 @@
+/* ============================================
+   DSH 手机精简版 · DSH Float 手机精简版
+   单栏 / 大字 / 无思考过程 / 输入框贴底
+   ============================================ */
+
+/* 2. 顶栏矮而清爽 */
+.Dc7zOa_header {
+  height: 34px !important; min-height: 34px !important;
+  padding: 0 8px !important;
+  background: #14161A !important;
+  border-bottom: 1px solid #ffffff12 !important;
+}
+
+/* 3. 容器撑满 */
+.BynINW_frame { height: 100vh !important; }
+.Dc7zOa_root { flex: 1 1 auto !important; height: 100% !important; min-height: 0 !important; }
+.Dc7zOa_body { flex: 1 1 auto !important; min-height: 0 !important; }
+.Dc7zOa_scrollBody {
+  flex: 1 1 auto !important; min-height: 0 !important;
+  padding: 0 12px !important;
+  justify-content: flex-start !important;
+}
+
+/* 4. 字体放大 */
+#root { font-size: 17px !important; line-height: 1.75 !important; -webkit-text-size-adjust: 100% !important; }
+.Dc7zOa_scrollBody p, .Dc7zOa_scrollBody li,
+.Dc7zOa_scrollBody div, .Dc7zOa_scrollBody span {
+  font-size: 17px !important; line-height: 1.75 !important;
+}
+.Dc7zOa_scrollBody pre, .Dc7zOa_scrollBody code { font-size: 14px !important; line-height: 1.6 !important; }
+.RlGAzG_input textarea, .RlGAzG_input, .Dc7zOa_composerSeat textarea {
+  font-size: 17px !important; line-height: 1.6 !important;
+}
+.Dc7zOa_header * { font-size: 15px !important; }
+
+/* 5. 隐藏思考过程与工具调用折叠块 */
+.WW4l1q_root { display: none !important; }
+
+/* 6. 隐藏底部 token 统计条（DeepSeek App 没有这个） */
+.RlGAzG_dock, .iq1doa_root { display: none !important; }
+
+/* 7. 输入框贴底紧凑 */
+.Dc7zOa_composerSeat {
+  position: static !important; flex: 0 0 auto !important;
+  height: auto !important; min-height: 0 !important;
+  margin-top: auto !important;
+  padding: 4px 8px 10px !important;
+  background: #14161A !important;
+}
+.Dc7zOa_composerStack { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+.RlGAzG_root { max-width: 100% !important; margin: 0 !important; }
+.RlGAzG_hero { margin: 0 !important; padding: 0 !important; }
+.RlGAzG_card { border-radius: 18px !important; }
+.Dc7zOa_composerSeat > .Hqq-bq_root { display: none !important; }
+
+/* 8. 滚动条细化 */
+::-webkit-scrollbar { width: 3px !important; height: 3px !important; }
+::-webkit-scrollbar-thumb { background: #ffffff22 !important; border-radius: 3px !important; }
+::-webkit-scrollbar-track { background: transparent !important; }
+/* ===== 手机极简：只留对话（需求）===== */
+.Dc7zOa_tabs { display: none !important; }
+.EBLgjq_trigger,
+.WgQWqa_main,
+._4Nnt6q_moreButton,
+.dzXS4q_button { display: none !important; }
+.Dc7zOa_header { height: 30px !important; min-height: 30px !important; padding: 0 6px !important; }
+/* ===== 隐藏桌宠（小鲸鱼挂件 / whale bubble）===== */
+[class^="dshwv-"], [class*=" dshwv-"] { display: none !important; }
+#dsh-whale-pet, .dsh-whale-pet { display: none !important; }
+/* ========== 隐藏 DSH 自带的悬浮件（联网小球 / 调试面板 / 光标）========== */
+#dsh-ego-fab,
+#dsh-ego-panel,
+.dsh-ego-live,
+.ego-agent-cursor-overlay { display: none !important; }
+
+/* ========== 布局修复：主列撑满（根因：frame 是 CSS Grid，藏侧栏后列宽不重算） ========== */
+.BynINW_frame { grid-template-columns: 1fr 0px 0px !important; }
+
+/* ========== 会话列表：默认隐藏，点 ☰ 弹出抽屉 ========== */
+.BynINW_sidebarCol { display: none !important; }
+
+body.alpha-sidebar-open .BynINW_sidebarCol {
+  display: block !important;
+  position: fixed !important;
+  left: 0 !important; top: 0 !important; bottom: 0 !important;
+  width: 80vw !important;
+  max-width: 330px !important;
+  height: 100vh !important;
+  z-index: 99999 !important;
+  background: #14161A !important;
+  box-shadow: 6px 0 26px #000b !important;
+  overflow: hidden !important;
+}
+body.alpha-sidebar-open .BynINW_centerCol {
+  filter: brightness(.55) !important;
+  pointer-events: none !important;
+}
+/* 抽屉里的会话列表允许滚动 */
+body.alpha-sidebar-open .BynINW_sidebarCol * { overflow: visible; }
